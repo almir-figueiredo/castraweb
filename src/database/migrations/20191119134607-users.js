@@ -29,10 +29,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      zipCode: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
       district: {
         type: Sequelize.STRING,
         allowNull: false,

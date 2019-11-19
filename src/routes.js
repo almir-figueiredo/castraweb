@@ -27,12 +27,12 @@ const bruteForce = new Brute(bruteStore);
 
 routes.post('/users', UserController.store);
 routes.post('/sessions', bruteForce.prevent, SessionController.store);
+routes.post('/users/:userId/animals', AnimalController.store);
 
 routes.use(authMiddleware);
 routes.put('/users', UserController.update);
 
-routes.post('/animals', AnimalController.update);
-routes.put('/animals', AnimalController.update);
+// routes.put('/animals', AnimalController.update);
 
 routes.post('/files', upload.single('file'), FileController.store);
 routes.get('/clinics', ClinicController.index);

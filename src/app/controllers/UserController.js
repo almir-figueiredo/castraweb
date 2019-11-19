@@ -8,13 +8,11 @@ class UserController {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
       cpf: Yup.string().required(),
-      birthday: Yup.string().required(),
       email: Yup.string()
         .email()
         .required(),
       phone: Yup.string().required(),
       address: Yup.string().required(),
-      zipCode: Yup.string().required(),
       district: Yup.string().required(),
       password: Yup.string()
         .required()
@@ -44,11 +42,9 @@ class UserController {
       id,
       name,
       cpf,
-      birthday,
       email,
       phone,
       address,
-      zipCode,
       district,
       citizen,
       operator,
@@ -64,11 +60,9 @@ class UserController {
       id,
       name,
       cpf,
-      birthday,
       email,
       phone,
       address,
-      zipCode,
       district,
       citizen,
       operator,
@@ -85,7 +79,6 @@ class UserController {
       email: Yup.string().email(),
       phone: Yup.string(),
       address: Yup.string(),
-      zipCode: Yup.string(),
       district: Yup.string(),
       oldPassword: Yup.string().min(6),
       password: Yup.string()

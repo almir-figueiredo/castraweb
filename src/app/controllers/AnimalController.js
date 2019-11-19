@@ -9,14 +9,14 @@ class AnimalController {
       gender: Yup.string().required(),
       race: Yup.string().required(),
       size: Yup.string().required(),
-      age: Yup.integer().required(),
+      age: Yup.string().required(),
     });
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails.' });
     }
 
-    const animalExists = await Animal.findOne({
+    /* const animalExists = await Animal.findOne({
       where: {
         name: req.body.name,
         specie: req.body.specie,
@@ -28,13 +28,14 @@ class AnimalController {
       return res.status(400).json({
         error: 'Animal já cadastrado, verifique os dados informados.',
       });
-    }
+    } */
     const { id, name, specie, gender, race, size, age } = await Animal.create(
       req.body
     );
 
     return res.json({
       id,
+      user_id: req.params.userId,
       name,
       specie,
       gender,
@@ -44,14 +45,14 @@ class AnimalController {
     });
   }
 
-  async update(req, res) {
+  /* async update(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
       specie: Yup.string().required(),
       gender: Yup.string().required(),
       race: Yup.string().required(),
       size: Yup.string().required(),
-      age: Yup.integer().required(),
+      age: Yup.string().required(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -75,7 +76,7 @@ class AnimalController {
       size,
       age,
     });
-  }
+  } */
 }
 
 export default new AnimalController();
