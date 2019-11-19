@@ -1,0 +1,8 @@
+yarn add rate-limit-redis express-rate-limit redis helmet express-brute express-brute-redis ioredis yup nodemailer-express-handlebars nodemailer multer mongoose jsonwebtoken express-handlebars date-fns cors bee-queue bcryptjs @sentry/node
+
+
+criar migrations:
+yarn sequelize migration:create --name=colocar_o_nome
+
+depois de formatar a migração:
+yarn sequelize db:migrate
