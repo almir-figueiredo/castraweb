@@ -1,30 +1,27 @@
 import Sequelize, { Model } from 'sequelize';
 import bcrypt from 'bcryptjs';
 
-class User extends Model {
+class Operator extends Model {
   static init(sequelize) {
     super.init(
       {
         name: Sequelize.STRING,
         cpf: Sequelize.STRING,
-        birthday: Sequelize.STRING,
         email: Sequelize.STRING,
-        phone: Sequelize.STRING,
-        address: Sequelize.STRING,
-        district: Sequelize.STRING,
-        zipcode: Sequelize.STRING,
+        registration: Sequelize.STRING,
         password: Sequelize.VIRTUAL,
         password_hash: Sequelize.STRING,
-        group_mantainer: Sequelize.BOOLEAN,
+        analyst: Sequelize.BOOLEAN,
+        mananger: Sequelize.BOOLEAN,
       },
       {
         sequelize,
       }
     );
 
-    this.addHook('beforeSave', async user => {
-      if (user.password) {
-        user.password_hash = await bcrypt.hash(user.password, 8);
+    this.addHook('beforeSave', async operator => {
+      if (operator.password) {
+        operator.password_hash = await bcrypt.hash(operator.password, 8);
       }
     });
 
@@ -36,4 +33,4 @@ class User extends Model {
   }
 }
 
-export default User;
+export default Operator;

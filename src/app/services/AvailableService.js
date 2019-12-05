@@ -1,94 +1,181 @@
 import {
+  startOfMonth,
+  endOfMonth,
   startOfDay,
-  endOfDay,
-  setHours,
-  setMinutes,
-  setSeconds,
   format,
+  eachDayOfInterval,
   isAfter,
+  isSaturday,
+  isSunday,
 } from 'date-fns';
-import { Op } from 'sequelize';
 import Appointment from '../models/Appointment';
+import Animal from '../models/Animal';
 
-class Availableservice {
-  async run({ clinic_id, date }) {
-    const appointments = await Appointment.findAll({
-      where: {
-        clinic_id,
-        canceled_at: null,
-        date: {
-          [Op.between]: [startOfDay(date), endOfDay(date)],
-        },
-      },
+class AvailableService {
+  async run({ clinic_id, year, month, user_id }) {
+    const schedule = eachDayOfInterval({
+      start: startOfMonth(new Date(year, month, 0)),
+      end: endOfMonth(new Date(year, month, 0)),
     });
-    const schedule = [
-      '23:01',
-      '23:02',
-      '23:03',
-      '23:04',
-      '23:05',
-      '23:06',
-      '23:07',
-      '23:08',
-      '23:09',
-      '23:10',
-      '23:11',
-      '23:12',
-      '23:13',
-      '23:14',
-      '23:15',
-      '23:16',
-      '23:17',
-      '23:18',
-      '23:19',
-      '23:20',
-      '23:21',
-      '23:22',
-      '23:23',
-      '23:24',
-      '23:25',
-      '23:26',
-      '23:27',
-      '23:28',
-      '23:29',
-      '23:30',
-      '23:31',
-      '23:32',
-      '23:33',
-      '23:34',
-      '23:35',
-      '23:36',
-      '23:37',
-      '23:38',
-      '23:39',
-      '23:40',
-      '23:41',
-      '23:42',
-      '23:43',
-      '23:44',
-      '23:45',
-      '23:46',
-      '23:47',
-      '23:48',
-      '23:49',
-      '23:50',
-    ];
 
-    const available = schedule.map(time => {
-      const [hour, minute] = time.split(':');
-      const value = setSeconds(setMinutes(setHours(date, hour), minute), 0);
+    const promisses = schedule.map(async day => {
+      const value = format(startOfDay(day), 'dd/MM/yyyy');
+      const largeFemaleDog = await Appointment.findAndCountAll({
+        where: {
+          clinic_id,
+          canceled_at: null,
+          date: day,
+        },
+        include: [
+          {
+            model: Animal,
+            where: { specie: 'canina', gender: 'F', size: 'G' },
+          },
+        ],
+        distinct: true,
+      });
+      const smallFemaleDog = await Appointment.findAndCountAll({
+        where: {
+          clinic_id,
+          canceled_at: null,
+          date: day,
+        },
+        include: [
+          {
+            model: Animal,
+            where: { specie: 'canina', gender: 'F', size: 'P' },
+          },
+        ],
+        distinct: true,
+      });
+      const maleDog = await Appointment.findAndCountAll({
+        where: {
+          clinic_id,
+          canceled_at: null,
+          date: day,
+        },
+        include: [
+          {
+            model: Animal,
+            where: { specie: 'canina', gender: 'M' },
+          },
+        ],
+        distinct: true,
+      });
+      const femaleCat = await Appointment.findAndCountAll({
+        where: {
+          clinic_id,
+          canceled_at: null,
+          date: day,
+        },
+        include: [
+          {
+            model: Animal,
+            where: { specie: 'felina', gender: 'F' },
+          },
+        ],
+        distinct: true,
+      });
+      const maleCat = await Appointment.findAndCountAll({
+        where: {
+          clinic_id,
+          canceled_at: null,
+          date: day,
+        },
+        include: [
+          {
+            model: Animal,
+            where: { specie: 'felina', gender: 'M' },
+          },
+        ],
+        distinct: true,
+      });
+
+      const user_largeFemaleDog = await Animal.findAndCountAll({
+        where: {
+          user_id,
+          specie: 'canina',
+          gender: 'F',
+          size: 'G',
+        },
+      });
+      const user_smallFemaleDog = await Animal.findAndCountAll({
+        where: {
+          user_id,
+          specie: 'canina',
+          gender: 'F',
+          size: 'P',
+        },
+      });
+      const user_maleDog = await Animal.findAndCountAll({
+        where: {
+          user_id,
+          specie: 'canina',
+          gender: 'M',
+        },
+      });
+      const user_femaleCat = await Animal.findAndCountAll({
+        where: {
+          user_id,
+          specie: 'felina',
+          gender: 'F',
+        },
+      });
+      const user_maleCat = await Animal.findAndCountAll({
+        where: {
+          user_id,
+          specie: 'felina',
+          gender: 'M',
+        },
+      });
 
       return {
-        time,
-        value: format(value, "yyyy-MM-dd'T'HH:mm:ssxxx"),
-        available:
-          isAfter(value, new Date()) &&
-          !appointments.find(a => format(a.date, 'HH:mm') === time),
+        day,
+        value,
+        largeFemaleDog,
+        smallFemaleDog,
+        maleDog,
+        femaleCat,
+        maleCat,
+        user_largeFemaleDog,
+        user_smallFemaleDog,
+        user_maleDog,
+        user_femaleCat,
+        user_maleCat,
       };
     });
 
-    return available;
+    const results = await Promise.all(promisses);
+
+    const listDate = results.map(i => {
+      const { day } = i;
+      const { value } = i;
+      const appointments_made = {
+        n_largeFemaleDog: i.largeFemaleDog.count,
+        n_smallFemaleDog: i.smallFemaleDog.count,
+        n_maleDog: i.maleDog.count,
+        n_femaleCat: i.femaleCat.count,
+        n_maleCat: i.maleCat.count,
+      };
+
+      const available =
+        isAfter(i.day, new Date()) &&
+        !isSaturday(i.day) &&
+        !isSunday(i.day) &&
+        i.largeFemaleDog.count + i.user_largeFemaleDog.count <= 3 &&
+        i.smallFemaleDog.count + i.user_smallFemaleDog.count <= 7 &&
+        i.maleDog.count + i.user_maleDog.count <= 10 &&
+        i.femaleCat.count + i.user_femaleCat.count <= 10 &&
+        i.maleCat.count + i.user_maleCat.count <= 10;
+      return {
+        day,
+        value,
+        appointments_made,
+        available,
+      };
+    });
+    return listDate;
   }
 }
 
-export default new Availableservice();
+export default new AvailableService();

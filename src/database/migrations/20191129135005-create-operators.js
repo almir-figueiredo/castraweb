@@ -1,41 +1,42 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('animals', {
+    return queryInterface.createTable('operators', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
       },
-      user_id: {
-        type: Sequelize.INTEGER,
-        references: { model: 'users', key: 'id' },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
-        allowNull: true,
-      },
       name: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      specie: {
+      cpf: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      registration: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      gender: {
+      email: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      password_hash: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      race: {
-        type: Sequelize.STRING,
+      analyst: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
         allowNull: false,
       },
-      size: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      age: {
-        type: Sequelize.STRING,
+      mananger: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
         allowNull: false,
       },
       created_at: {
@@ -46,10 +47,14 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
+      cancelled_at: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
     });
   },
 
   down: queryInterface => {
-    return queryInterface.dropTable('animals');
+    return queryInterface.dropTable('operators');
   },
 };

@@ -4,6 +4,8 @@ class Animal extends Model {
   static init(sequelize) {
     super.init(
       {
+        user_id: Sequelize.INTEGER,
+        auth_number: Sequelize.STRING,
         name: Sequelize.STRING,
         specie: Sequelize.STRING,
         gender: Sequelize.STRING,
@@ -20,7 +22,7 @@ class Animal extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
+    this.belongsTo(models.User, { foreignKey: 'user_id' });
   }
 }
 

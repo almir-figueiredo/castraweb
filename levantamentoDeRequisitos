@@ -1,0 +1,85 @@
+CADASTRO PARA CASTRAÇÃO
+
+ROTAS PARA OPERADORES
+ROTA “./”
+Login do operador/usuário/clínica
+	- Login e senha
+- Direciona para página do cadastro, se não tiver.
+- Direciona para as rotas específicas conforme perfil:
+	- operador é direcionado para
+
+ROTA “./cadastro”
+- Cadastrar o operador
+- Gerar token
+ROTA ”./users”
+- Cadastrar usuário:
+	- Nome, CPF, endereço, e-mail, telefone;
+ROTA “./animals”
+- Cadastrar animais:
+	- Nome, espécie, sexo, porte, raça.
+ROTA “./schedule:
+Função GET
+Calcula a quantidade de animais por espécie/sexo/porte já cadastrados, compara com a quantidade máxima e determina a quantidade de vagas, por dia.
+Compara a quantidade de vagas por espécie/sexo/porte com o conjunto cadastrado para o usuário e indica se a viabilidade de vagas para todos os animais é ‘true’ ou ‘false’.
+Função POST
+- Inserir animais na data mais próxima com vaga para os três animais.
+- Alterar data da cirurgia
+ROTA”./confirmation:
+- Gerar documento de confirmação de cadastro com data da cirurgia e senha para reagendamento.
+
+
+ROTAS PARA USUÁRIOS
+
+ROTA “./user/profile”
+	- Atualizar dados de login e senha
+ROTA “./user/schedules”
+	- Visualiza as cirurgias (estados de data e situação alteradas por rotas da clínica)
+
+ROTA “./user/reschedule”
+Função UPDATE
+	- Alterar data da cirurgia
+	- Alterar situação da cirurgia de Agendado para Cancelado. (Altera estado de rotas da clínica)
+
+ROTAS PARA A CLÍNICA
+ROTA “./clinic/profile”
+Atualizar dados cadastrais
+
+ROTA “./clinic/schedule”
+Função GET:
+- Visualizar agenda por dia;
+Função UPDATE:
+- Atualizar data da cirurgia
+- Atualizar situação da cirurgia – FALTA, AGENDADA, RECUSADA, CANCELADA (estado atualizado pela clínica ou pelo usuário), SUSPENSA, REALIZADA
+No fronted tem que ter botões para os dois tipos de análises: tabelas e pesquisas.
+ROTA “./clinic/schedule/tables”
+- Tabelas resumo de cirurgias
+- Por situação (estado modificado por rota da clínica e do usuário)
+-  Realizadas por espécie/sexo; (estado modificado por rota da clínica e do usuário)
+- Atestada por espécie/sexo; (estado modificado por rota exclusiva do Ibram)
+- Glosadas por espécie/sexo; (estado modificado por rota exclusiva do Ibram)
+ROTA “./clinic/schedule/search”
+- Pesquisas das cirurgias por usuários, animais, situação, período temporal
+
+
+
+ROTA “./documents/relatories”
+Função POST:
+	Formulário para gerar relatório mensal
+ROTA “./documents/uploads”
+Função POST:
+Uploads de documentos: Comprovantes das cirurgias e Notas Fiscais
+Upload de documentos diversos:
+
+ROTAS PARA EXECUTOR DO CONTRATO:
+
+ROTA “./clinic/register”
+Função POST:
+- Cadastrar a clínica para acessar a aplicação
+Função UPDATE:
+- Alterar informações da clínica
+Função DELETE:
+- Descredenciar a clínica.
+
+ROTA ‘./checking”
+Função UPDATE:
+- Altera situação de pagamento da cirurgia, Autorizada e Negada

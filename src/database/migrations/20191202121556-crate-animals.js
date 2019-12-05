@@ -1,60 +1,45 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('users', {
+    return queryInterface.createTable('animals', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
       },
+      user_id: {
+        type: Sequelize.INTEGER,
+        references: { model: 'users', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
+        allowNull: true,
+      },
       name: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      cpf: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        unique: true,
-      },
-      email: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        unique: true,
-      },
-      phone: {
+      auth_number: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      address: {
+      specie: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      district: {
+      gender: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      password_hash: {
+      race: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      citizen: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false,
+      size: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
-      operator: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false,
-        allowNull: false,
-      },
-      clinic: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false,
-        allowNull: false,
-      },
-      mananger: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false,
+      age: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
       created_at: {
@@ -65,14 +50,10 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
-      cancelled_at: {
-        type: Sequelize.DATE,
-        allowNull: true,
-      },
     });
   },
 
   down: queryInterface => {
-    return queryInterface.dropTable('users');
+    return queryInterface.dropTable('animals');
   },
 };

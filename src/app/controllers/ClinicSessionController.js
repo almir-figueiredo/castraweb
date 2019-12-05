@@ -1,11 +1,11 @@
 import jwt from 'jsonwebtoken';
 import * as Yup from 'yup';
 
-import User from '../models/User';
+import Clinic from '../models/Clinic';
 
 import authConfig from '../../config/auth';
 
-class SessionController {
+class ClinicSessionController {
   async store(req, res) {
     const schema = Yup.object().shape({
       email: Yup.string()
@@ -19,41 +19,41 @@ class SessionController {
     }
 
     const { email, password } = req.body;
-    const user = await User.findOne({
+    const clinic = await Clinic.findOne({
       where: { email },
     });
 
-    if (!user) {
-      return res.status(401).json({ error: 'User not found.' });
+    if (!clinic) {
+      return res.status(401).json({ error: 'Clinic not found.' });
     }
-    if (!(await user.checkPassword(password))) {
+    if (!(await clinic.checkPassword(password))) {
       return res.status(401).json({ error: 'Password does not match.' });
     }
 
     const {
       id,
       name,
-      cpf,
-      birthday,
+      cnpj,
+      technical_legal,
       phone,
+      phone_24h,
       address,
-      district,
       zipcode,
-      group_mantainer,
-    } = user;
+      district,
+    } = clinic;
 
     return res.json({
-      user: {
+      clinic: {
         id,
         name,
-        cpf,
-        birthday,
+        cnpj,
+        technical_legal,
         email,
         phone,
+        phone_24h,
         address,
-        district,
         zipcode,
-        group_mantainer,
+        district,
       },
       token: jwt.sign({ id }, authConfig.secret, {
         // entrar no md5 online e gerar uma palavra
@@ -63,4 +63,4 @@ class SessionController {
   }
 }
 
-export default new SessionController();
+export default new ClinicSessionController();

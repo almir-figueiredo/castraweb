@@ -1,33 +1,32 @@
 import * as Yup from 'yup';
 import User from '../models/User';
 
-import Cache from '../../lib/Cache';
+// import Cache from '../../lib/Cache';
 
 class UserController {
   async store(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
       cpf: Yup.string().required(),
+      birthday: Yup.string().required(),
       email: Yup.string()
         .email()
         .required(),
       phone: Yup.string().required(),
       address: Yup.string().required(),
       district: Yup.string().required(),
+      zipcode: Yup.string().required(),
       password: Yup.string()
         .required()
         .min(6),
-      citizen: Yup.boolean().required(),
-      operator: Yup.boolean().required(),
-      clinic: Yup.boolean().required(),
-      mananger: Yup.boolean().required(),
+      group_mantainer: Yup.boolean().required(),
     });
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails.' });
     }
 
-    /* const cpfExists = await User.findOne({ where: { cpf: req.body.cpf } });
+    const cpfExists = await User.findOne({ where: { cpf: req.body.cpf } });
 
     if (cpfExists) {
       return res.status(400).json({ error: 'User already exists.' });
@@ -36,38 +35,36 @@ class UserController {
 
     if (userExists) {
       return res.status(400).json({ error: 'User already exists.' });
-    } */
+    }
 
     const {
       id,
       name,
       cpf,
+      birthday,
       email,
       phone,
       address,
       district,
-      citizen,
-      operator,
-      clinic,
-      mananger,
+      zipCode,
+      group_mantainer,
     } = await User.create(req.body);
 
-    if (clinic) {
+    /* if (clinic) {
       await Cache.invalidate('clinics');
-    }
+    } */
 
     return res.json({
       id,
       name,
       cpf,
+      birthday,
       email,
       phone,
       address,
       district,
-      citizen,
-      operator,
-      clinic,
-      mananger,
+      zipCode,
+      group_mantainer,
     });
   }
 
@@ -75,11 +72,12 @@ class UserController {
     const schema = Yup.object().shape({
       name: Yup.string(),
       cpf: Yup.string(),
-      birthday: Yup.string(),
+      birthday: Yup.date(),
       email: Yup.string().email(),
       phone: Yup.string(),
       address: Yup.string(),
       district: Yup.string(),
+      zipCode: Yup.string(),
       oldPassword: Yup.string().min(6),
       password: Yup.string()
         .min(6)
@@ -119,13 +117,20 @@ class UserController {
 
     await user.update(req.body);
 
-    const { id, name } = await User.findByPk(req.userId);
+    const { id } = await User.findByPk(req.userId);
+
+    const { name, birthday, phone, address, district, zipCode } = req.body;
 
     return res.json({
       id,
       name,
       cpf,
+      birthday,
       email,
+      phone,
+      address,
+      district,
+      zipCode,
     });
   }
 }

@@ -1,30 +1,27 @@
 import Sequelize, { Model } from 'sequelize';
 import bcrypt from 'bcryptjs';
 
-class User extends Model {
+class ClinicMember extends Model {
   static init(sequelize) {
     super.init(
       {
         name: Sequelize.STRING,
         cpf: Sequelize.STRING,
-        birthday: Sequelize.STRING,
         email: Sequelize.STRING,
-        phone: Sequelize.STRING,
-        address: Sequelize.STRING,
-        district: Sequelize.STRING,
-        zipcode: Sequelize.STRING,
         password: Sequelize.VIRTUAL,
         password_hash: Sequelize.STRING,
-        group_mantainer: Sequelize.BOOLEAN,
       },
       {
         sequelize,
       }
     );
 
-    this.addHook('beforeSave', async user => {
-      if (user.password) {
-        user.password_hash = await bcrypt.hash(user.password, 8);
+    this.addHook('beforeSave', async clinicMember => {
+      if (clinicMember.password) {
+        clinicMember.password_hash = await bcrypt.hash(
+          clinicMember.password,
+          8
+        );
       }
     });
 
@@ -34,6 +31,10 @@ class User extends Model {
   checkPassword(password) {
     return bcrypt.compare(password, this.password_hash);
   }
+
+  static associate(models) {
+    this.belongsTo(models.Clinic, { foreignKey: 'clinic_id', as: 'clinic' });
+  }
 }
 
-export default User;
+export default ClinicMember;

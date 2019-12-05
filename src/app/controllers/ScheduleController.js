@@ -6,38 +6,32 @@ import Animal from '../models/Animal';
 
 class ScheduleController {
   async index(req, res) {
-    const checkUserClinic = await User.findOne({
-      where: { id: req.userId, clinic: true },
-    });
-
-    if (!checkUserClinic) {
-      return res.status(400).json({ error: 'Uma clínica deve ser escolhida.' });
-    }
-
-    const { date } = req.query;
-    const parsedDate = parseISO(date);
+    const { page = 1 } = req.query;
+    const { date } = req.body;
+    const parsedDate = startOfDay(parseISO(date));
 
     const appointments = await Appointment.findAll({
       where: {
-        clinic_id: req.userId,
+        clinic_id: req.params.clinicId,
         canceled_at: null,
         date: {
           [Op.between]: [startOfDay(parsedDate), endOfDay(parsedDate)],
         },
       },
+      attributes: ['id', 'date', 'cancelable', 'situation'],
+      limit: 50,
+      offset: (page - 1) * 50,
       include: [
         {
           model: User,
-          as: 'citizen',
-          attributes: ['name'],
+          attributes: ['name', 'cpf', 'email', 'phone', 'district'],
+          order: ['name'],
         },
         {
           model: Animal,
-          as: 'animal',
-          attributes: ['name', 'specie', 'gender', 'size'],
+          attributes: ['name', 'specie', 'gender', 'race', 'age', 'size'],
         },
       ],
-      order: ['date'],
     });
 
     return res.json(appointments);
